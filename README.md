@@ -17,7 +17,9 @@ References
 ----------
 GLib reference: 
 https://docs.gtk.org/glib/
+
 IBM intro to GLib:
 https://developer.ibm.com/tutorials/l-glib/#sorting-with-gcomparefunc21
+
 Valgrind:
 https://valgrind.org/docs/manual/quick-start.html#quick-start.prepare
