@@ -65,6 +65,7 @@ void day1_2(char* filename)
 {
 	FILE* fp;		// File pointer
 	char* line = NULL;	// Buffer for the line being read
+	line = (char*) malloc (sizeof(char) * 256);
 	size_t len = 255;	// Number of characters to read -1 (for the null ending)
 	ssize_t read = 0;	// Number of characters read
 	unsigned int first = 0;	// First number read
