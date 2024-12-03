@@ -9,6 +9,9 @@ day1: day1.o
 
 day2: day2.o
 	$(CC) $(CFLAGS) -g -o day2 day2.o $(LIBS)
+
+day3: day3.o
+	$(CC) $(CFLAGS) -g -o day3 day3.o $(LIBS)
 	
 %.o: %.c
 	$(CC) $(CFLAGS) -g -c $< $(LIBS)
