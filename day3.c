@@ -237,7 +237,7 @@ void day3_1(char *filename)
 void day3_2(char *filename)
 {
 	/**
-	 * Solves the first problem for day 1 of the AoC and prints the answer.
+	 * Solves the second problem for day 3 of the AoC and prints the answer.
 	 * @param filename path to the file containing the input data.
 	 */
 	unsigned long result = 0;  // Variable for holding the final result
