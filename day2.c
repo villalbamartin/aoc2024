@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool is_valid(unsigned int* numbers, size_t length)
+bool is_valid(unsigned int *numbers, size_t length)
 {
 	unsigned int previous = 0;
 	unsigned int current = 0;
 	bool knows_direction = false;  // Do I know the numbers direction?
 	bool downwards;  // Direction of the numbers
 	bool valid = true;  // Return value
-	for (size_t i = 0; i<length; i++)
+	for (size_t i = 0; i < length; i++)
 	{
 		previous = current;
 		current = numbers[i];
@@ -26,12 +26,12 @@ bool is_valid(unsigned int* numbers, size_t length)
 			if (downwards)
 			{
 				valid = valid && (current < previous) &&
-						 (previous - current < 4);
+				        (previous - current < 4);
 			}
 			else
 			{
 				valid = valid && (current > previous) &&
-						 (current - previous < 4);
+				        (current - previous < 4);
 			}
 		}
 	}
@@ -51,7 +51,8 @@ void day2_1(char *filename)
 	ssize_t read = 0;  // Number of characters read
 
 	unsigned int num_safe = 0;  // Return value
-	unsigned int* curr_values = (unsigned int*) malloc(sizeof(unsigned int)*256);
+	unsigned int *curr_values =
+	    (unsigned int *)malloc(sizeof(unsigned int) * 256);
 	unsigned int num_values = 0;
 	// Read file and iterate
 	fp = fopen(filename, "r");
@@ -64,7 +65,8 @@ void day2_1(char *filename)
 			num_values = 0;
 			while (token != NULL)
 			{
-				curr_values[num_values] = (unsigned int) strtoul(token, NULL, 10);
+				curr_values[num_values] =
+				    (unsigned int)strtoul(token, NULL, 10);
 				num_values += 1;
 				token = strtok(NULL, " ");
 			}
@@ -96,8 +98,10 @@ void day2_2(char *filename)
 	ssize_t read = 0;  // Number of characters read
 
 	unsigned int num_safe = 0;  // Return value
-	unsigned int* curr_values = (unsigned int*) malloc(sizeof(unsigned int)*256);
-	unsigned int* curr_values_minus1 = (unsigned int*) malloc(sizeof(unsigned int)*256);
+	unsigned int *curr_values =
+	    (unsigned int *)malloc(sizeof(unsigned int) * 256);
+	unsigned int *curr_values_minus1 =
+	    (unsigned int *)malloc(sizeof(unsigned int) * 256);
 	unsigned int num_values = 0;
 	// Read file and iterate
 	fp = fopen(filename, "r");
@@ -110,7 +114,8 @@ void day2_2(char *filename)
 			num_values = 0;
 			while (token != NULL)
 			{
-				curr_values[num_values] = (unsigned int) strtoul(token, NULL, 10);
+				curr_values[num_values] =
+				    (unsigned int)strtoul(token, NULL, 10);
 				num_values += 1;
 				token = strtok(NULL, " ");
 			}
@@ -121,17 +126,21 @@ void day2_2(char *filename)
 			else
 			{
 				// Time to try all chances with one number out
-				for (size_t i=0; i<num_values; i++)
+				for (size_t i = 0; i < num_values; i++)
 				{
-					for (size_t j=0; j<i; j++)
+					for (size_t j = 0; j < i; j++)
 					{
-						curr_values_minus1[j] = curr_values[j];
+						curr_values_minus1[j] =
+						    curr_values[j];
 					}
-					for (size_t j=i; j<num_values-1; j++)
+					for (size_t j = i; j < num_values - 1;
+					     j++)
 					{
-						curr_values_minus1[j] = curr_values[j+1];
+						curr_values_minus1[j] =
+						    curr_values[j + 1];
 					}
-					if (is_valid(curr_values_minus1, num_values-1))
+					if (is_valid(curr_values_minus1,
+					             num_values - 1))
 					{
 						num_safe += 1;
 						break;
@@ -153,7 +162,7 @@ void day2_2(char *filename)
 
 int main(int argc, char **argv)
 {
-	day2_1("inputs/day2.txt"); // 472
-	day2_2("inputs/day2.txt"); // 520
+	day2_1("inputs/day2.txt");  // 472
+	day2_2("inputs/day2.txt");  // 520
 	return 0;
 }
