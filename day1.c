@@ -68,7 +68,7 @@ void day1_1(char *filename)
 		diff += first > second ? first - second : second - first;
 	}
 	// Print the final answer
-	printf("%u\n", diff);
+	printf("%lu\n", diff);
 	// Free remaining resources
 	g_list_free(l_first);
 	l_first = NULL;
@@ -157,7 +157,7 @@ void day1_2(char *filename)
 		similarity += curr_val * first;
 	}
 	// Print the final answer
-	printf("%u\n", similarity);
+	printf("%lu\n", similarity);
 	// Free remaining resources
 	g_hash_table_destroy(frequencies);
 	frequencies = NULL;

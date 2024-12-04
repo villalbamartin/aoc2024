@@ -231,7 +231,7 @@ void day3_1(char *filename)
 		}
 	}
 	fclose(file);
-	printf("%u\n", result);
+	printf("%lu\n", result);
 }
 
 void day3_2(char *filename)
@@ -662,7 +662,7 @@ void day3_2(char *filename)
 		}
 	}
 	fclose(file);
-	printf("%u\n", result);
+	printf("%lu\n", result);
 }
 
 int main(int argc, char **argv)

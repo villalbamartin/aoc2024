@@ -15,7 +15,7 @@ day3: day3.o
 
 day4: day4.o
 	$(CC) $(CFLAGS) -g -o day4 day4.o $(LIBS)
-	
+
 %.o: %.c
 	$(CC) $(CFLAGS) -g -c $< $(LIBS)
 
@@ -23,4 +23,4 @@ day4: day4.o
 	touch $@
 
 clean:
-	rm *.o day1 day2
+	rm -f *.o day1 day2 day3 day4
