@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 // Possible directions
+// Every direction has an associated bit value that will be used later to
+// identify which directions have already been visited.
 enum Direction
 {
 	Up = 0x02,
