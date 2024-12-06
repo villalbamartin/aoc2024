@@ -69,8 +69,9 @@ GHashTable *read_poset(char *filename)
 	 */
 	GHashTable *precedences = NULL;  // Hash table of occurrences
 	GHashTable *hashset = NULL;  // Pointer for a set of integers
-	precedences = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL,
-	                                    g_hash_table_destroy);
+	precedences =
+	    g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL,
+	                          (GDestroyNotify)g_hash_table_destroy);
 
 	FILE *fp;  // Pointer to open a file
 	char *line = NULL;  // Line currently being read
