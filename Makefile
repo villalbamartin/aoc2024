@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=`pkg-config --cflags glib-2.0` -Wall -pedantic
-LIBS=`pkg-config --libs glib-2.0`	
+LIBS=`pkg-config --libs glib-2.0` -lm
 
 all: day1 day2 day3 day4 day5 day6
 	echo "Making all"
@@ -22,6 +22,9 @@ day5: day5.o
 
 day6: day6.o utils.o
 	$(CC) $(CFLAGS) -g -o $@ $< utils.o $(LIBS)
+
+day7: day7.o
+	$(CC) $(CFLAGS) -g -o $@ $< $(LIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -g -c $< $(LIBS)
