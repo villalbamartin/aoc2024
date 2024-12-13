@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
+
 
 unsigned long int checksum(int *mem)
 {
@@ -14,6 +16,12 @@ unsigned long int checksum(int *mem)
 	}
 	return retval;
 }
+
+struct s_file {
+    size_t pos;
+    unsigned int size;
+    unsigned int id;
+};
 
 void day9_1(char *filename)
 {
@@ -104,9 +112,76 @@ void day9_1(char *filename)
 	free(line);
 	fclose(fp);
 }
+void day9_2(char *filename)
+{
+	/**
+	 * Solves the second problem for day 9 of the AoC and prints the answer.
+	 * @param filename path to the file containing the input data.
+	 */
+
+	FILE *fp;  // Pointer to open a file
+	char *line = NULL;  // Line currently being read
+	size_t len = 0;  // Parameter for getline()
+
+	int curr_id = 0;  // ID of the current file
+	size_t curr_pos =
+	    0;  // Index for the current position when looking forward
+	size_t curr_free =
+	    0;  // Index for the position of the first block of free memory
+	bool is_space =
+	    false;  // Whether we are reading the size of a space or a file
+    GQueue *empty_nodes = g_queue_new();  // List storing empty nodes
+    GQueue *busy_nodes = g_queue_new();  // List storing empty nodes
+    GQeueue *final_nodes = g_queue_new();
+    struct s_file* node_ptr;
+
+	// Read the number of rows and columns
+	fp = fopen(filename, "r");
+	// Since we read a single line we don't need a "while" loop
+	getline(&line, &len, fp);
+
+	for (size_t i = 0; i < strlen(line); i++)
+	{
+		// This was the source of the one bug I had
+		if (line[i] == '\n')
+		{
+			break;
+		}
+        node_ptr = (struct s_file*) malloc(sizeof(struct s_file));
+        node_ptr->pos = curr_pos;
+        node_ptr->size = line[i] - '0';
+		if (!is_space)
+		{
+            node_ptr->id = curr_id;
+			curr_id += 1;
+            g_queue_push_tail(busy_nodes, node_ptr);
+		}
+        else
+        {    
+            g_queue_push_tail(empty_nodes, node_ptr);
+        }
+		// Increase the index of the current position and switch between
+		// space / file
+		curr_pos += line[i] - '0';
+		is_space = !is_space;
+	}
+    for(size_t i=0; i<g_queue_get_length(busy_nodes); i++)
+    {
+        node_ptr = (struct s_file*)g_queue_peek_nth(busy_nodes, i);
+        //printf("%lu\n", node_ptr->pos);
+    }
+    for(size_t i=0; i<g_queue_get_length(empty_nodes); i++)
+    {
+        node_ptr = (struct s_file*)g_queue_peek_nth(empty_nodes, i);
+        printf("%lu\n", node_ptr->pos);
+    }
+	free(line);
+	fclose(fp);
+}
 
 int main(int argc, char **argv)
 {
-	day9_1("inputs/day9.txt");
+	//day9_1("inputs/day9.txt");
+	day9_2("inputs/day9.txt");
 	return 0;
 }
