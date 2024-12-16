@@ -18,4 +18,13 @@
  */
 char **get_square_input(char *filename, size_t *rows, size_t *cols);
 
+/**
+ * Returns an empty, bidimensional array of the given size.
+ * @param rows the number of rows in the array.
+ * @param cols the number of columns in the array.
+ *
+ * @return an empty bidimensional array
+ */
+char **get_empty_array(size_t rows, size_t cols);
+
 #endif /* UTILS_H */

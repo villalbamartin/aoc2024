@@ -38,8 +38,8 @@ day10: day10.o utils.o
 day11: day11.o
 	$(CC) $(CFLAGS) -g -o $@ $<  $(LIBS)
 
-day12: day12.o
-	$(CC) $(CFLAGS) -g -o $@ $<  $(LIBS)
+day12: day12.o utils.o
+	$(CC) $(CFLAGS) -g -o $@ $< utils.o $(LIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -g -c $< $(LIBS)

@@ -52,3 +52,13 @@ char **get_square_input(char *filename, size_t *rows, size_t *cols)
 	return input;
 }
 
+char **get_empty_array(size_t rows, size_t cols)
+{
+	char **array = (char**) malloc (sizeof(char*) * rows);
+	for (size_t i=0; i<rows; i++)
+	{
+		array[i] = (char*) malloc(sizeof(char) * cols);
+		memset(array[i], '\0', sizeof(char) * cols);
+	}
+	return array;
+}
