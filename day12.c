@@ -108,6 +108,6 @@ void day12_1(char *filename)
 
 int main(int argc, char **argv)
 {
-	day12_1("inputs/day12.txt"); // 1518548 
+	day12_1("inputs/day12.txt"); // 1518548
 	return 0;
 }
