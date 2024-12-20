@@ -27,6 +27,30 @@ You can check for memory leaks with Valgrind and the command
 valgrind --leak-check=yes ./day1
 ```
 
+Current status
+--------------
+The eternal problem with AoC is that I barely have time to get a working
+solution, much less a "proper" one. This table details what's missing from
+every submission.
+
+| Day    | Part 1   | Part 2  | Valgrind | Comments | GLib structures |
+|--------|----------|---------|----------|----------|-----------------|
+| Day 1  | Yes      | Yes     | Yes      | Yes      |                 |
+| Day 2  | Yes      | Yes     |          |          |                 |
+| Day 3  | Yes      | Yes     |          |          |                 |
+| Day 4  | Yes      | Yes     |          |          |                 |
+| Day 5  | Yes      | Yes     |          |          |                 |
+| Day 6  | Yes      | Yes     |          |          |                 |
+| Day 7  | Yes      | Yes     |          |          |                 |
+| Day 8  | Yes      | Yes     |          |          |                 |
+| Day 9  | Yes      |         |          |          |                 |
+| Day 10 | Yes      | Yes     |          |          |                 |
+| Day 11 | Yes      | Yes     |          |          |                 |
+| Day 12 | Yes      |         |          |          |                 |
+| Day 13 | Yes      |         |          |          |                 |
+| Day 14 | Yes      | Yes     |          |          |                 |
+
+
 References
 ----------
 GLib reference: 

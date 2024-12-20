@@ -54,11 +54,18 @@ char **get_square_input(char *filename, size_t *rows, size_t *cols)
 
 char **get_empty_array(size_t rows, size_t cols)
 {
-	char **array = (char**) malloc (sizeof(char*) * rows);
-	for (size_t i=0; i<rows; i++)
+	char **array = (char **)malloc(sizeof(char *) * rows);
+	for (size_t i = 0; i < rows; i++)
 	{
-		array[i] = (char*) malloc(sizeof(char) * cols);
+		array[i] = (char *)malloc(sizeof(char) * cols);
 		memset(array[i], '\0', sizeof(char) * cols);
 	}
 	return array;
+}
+
+double dist(unsigned long int x0, unsigned long int y0, unsigned long int x1,
+            unsigned long int y1);
+{
+	return sqrt(pow(x1 > x0 ? x1 - x0 : x0 - x1, 2) +
+	            pow(y1 > y0 ? y1 - y0 : y0 - y1, 2));
 }

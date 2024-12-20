@@ -27,4 +27,16 @@ char **get_square_input(char *filename, size_t *rows, size_t *cols);
  */
 char **get_empty_array(size_t rows, size_t cols);
 
+/**
+ * Returns the Euclidean distance between two set of (x, y) coordinates.
+ * @param x0 The x coordinate of the first point.
+ * @param y0 The y coordinate of the first point.
+ * @param x1 The x coordinate of the second point.
+ * @param y1 The y coordinate of the second point.
+ *
+ * @return the Euclidean distance between the two sets of coordinates.
+ */
+double dist(unsigned long int x0, unsigned long int y0, unsigned long int x1,
+            unsigned long int y1);
+
 #endif /* UTILS_H */

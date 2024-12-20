@@ -39,14 +39,6 @@ char* pos_hash(struct s_pos* p)
     return buffer;
 }
 
-double dist(unsigned long int x0, unsigned long int y0,
-            unsigned long int x1, unsigned long int y1)
-{
-	return sqrt(pow(x1>x0 ? x1-x0 : x0-x1, 2) +
-		    pow(y1>y0 ? y1-y0 : y0-y1, 2));
-}
-
-
 GList* read_games(char* filename, bool add_offset)
 {	FILE *fp;
 	char *line = NULL;
@@ -310,12 +302,12 @@ void day13_2(char *filename)
 	 * @param filename path to the file containing the input data.
 	 */
 	game g;
-	GList* games = read_games(filename, true);
+	GList* games = read_games(filename, false);
 	unsigned long int tokens = 0;
 	for (size_t i=0; i<g_list_length(games); i++)
 	{
 		g = (game) g_list_nth(games, i)->data;
-		tokens += solve_game(g);
+		tokens += solve_game_long(g);
 		printf("Solved game\n");
 	}
     printf("%lu\n", tokens);

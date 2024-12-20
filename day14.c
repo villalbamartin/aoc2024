@@ -7,13 +7,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Move to utils
-double dist(unsigned long int x0, unsigned long int y0,
-            unsigned long int x1, unsigned long int y1)
-{
-	return sqrt(pow(x1>x0 ? x1-x0 : x0-x1, 2) +
-		    pow(y1>y0 ? y1-y0 : y0-y1, 2));
-}
 
 struct s_robot
 {
