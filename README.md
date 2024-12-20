@@ -33,12 +33,12 @@ The eternal problem with AoC is that I barely have time to get a working
 solution, much less a "proper" one. This table details what's missing from
 every submission:
 
-  * Part 1/2: whether the program solves this part
-  * Valgrind: whether the program passes Valgrind memory check. A * indicates
+  * *Part 1/2:* whether the program solves this part
+  * *Valgrind:* whether the program passes Valgrind memory check. A * indicates
     that the "still reachable" leak is non-zero. This is a known issue with
     GLib.
-  * Comments: whether all functions are properly commented
-  * GLib structures: whether the code uses as many data structures from GLib
+  * *Comments:* whether all functions are properly commented
+  * *GLib structures:* whether the code uses as many data structures from GLib
     as possible instead of custom-defined linked structures.
 
 | Day    | Part 1   | Part 2  | Valgrind | Comments | GLib structures |
