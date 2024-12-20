@@ -31,15 +31,23 @@ Current status
 --------------
 The eternal problem with AoC is that I barely have time to get a working
 solution, much less a "proper" one. This table details what's missing from
-every submission.
+every submission:
+
+  * Part 1/2: whether the program solves this part
+  * Valgrind: whether the program passes Valgrind memory check. A * indicates
+    that the "still reachable" leak is non-zero. This is a known issue with
+    GLib.
+  * Comments: whether all functions are properly commented
+  * GLib structures: whether the code uses as many data structures from GLib
+    as possible instead of custom-defined linked structures.
 
 | Day    | Part 1   | Part 2  | Valgrind | Comments | GLib structures |
 |--------|----------|---------|----------|----------|-----------------|
-| Day 1  | Yes      | Yes     | Yes      | Yes      |                 |
-| Day 2  | Yes      | Yes     |          |          |                 |
-| Day 3  | Yes      | Yes     |          |          |                 |
-| Day 4  | Yes      | Yes     |          |          |                 |
-| Day 5  | Yes      | Yes     |          |          |                 |
+| Day 1  | Yes      | Yes     | Yes*     | Yes      | Yes             |
+| Day 2  | Yes      | Yes     | Yes      | Yes      | Yes             |
+| Day 3  | Yes      | Yes     | Yes      | Yes!     | Yes             |
+| Day 4  | Yes      | Yes     | Yes      | Yes      | Yes             |
+| Day 5  | Yes      | Yes     | Yes*     | Kinda    |                 |
 | Day 6  | Yes      | Yes     |          |          |                 |
 | Day 7  | Yes      | Yes     |          |          |                 |
 | Day 8  | Yes      | Yes     |          |          |                 |

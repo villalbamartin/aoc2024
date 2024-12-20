@@ -14,8 +14,8 @@ day2: day2.o
 day3: day3.o
 	$(CC) $(CFLAGS) -g -o $@ $< $(LIBS)
 
-day4: day4.o
-	$(CC) $(CFLAGS) -g -o $@ $< $(LIBS)
+day4: day4.o utils.o
+	$(CC) $(CFLAGS) -g -o $@ $< utils.o $(LIBS)
 
 day5: day5.o
 	$(CC) $(CFLAGS) -g -o $@ $< $(LIBS)

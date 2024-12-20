@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// This HAS to be predefined somewhere
 gint compare_uint(gconstpointer item1, gconstpointer item2)
 {
 	/**

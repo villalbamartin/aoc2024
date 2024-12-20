@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 // Pointer to pass a GHashTable to the compare_int_poset function.
+// We have no control over how the function passes arguments, so it's
+// either declaring it global (as seen here) or redefining the function
+// passing.
 GHashTable *global_precedences;
 
 gint compare_int_poset(gconstpointer item1, gconstpointer item2)
@@ -16,6 +19,9 @@ gint compare_int_poset(gconstpointer item1, gconstpointer item2)
 	 * @param item2 the second integer.
 	 * @return a boolean indicating whether a is larger than b
 	 * @note this function queries the global variable global_precedences.
+	 * And in case it isn't clear: a poset is a partially-ordered set -
+	 * unlike an ordered set, we can say that a<c and b<c but we don't know
+	 * anything about the relation between a and b.
 	 */
 	int a = *(int *)item1;
 	int b = *(int *)item2;

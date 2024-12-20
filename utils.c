@@ -64,7 +64,7 @@ char **get_empty_array(size_t rows, size_t cols)
 }
 
 double dist(unsigned long int x0, unsigned long int y0, unsigned long int x1,
-            unsigned long int y1);
+            unsigned long int y1)
 {
 	return sqrt(pow(x1 > x0 ? x1 - x0 : x0 - x1, 2) +
 	            pow(y1 > y0 ? y1 - y0 : y0 - y1, 2));
