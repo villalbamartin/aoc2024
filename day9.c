@@ -1,86 +1,153 @@
+#include <assert.h>
+#include <glib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <glib.h>
-#include <assert.h>
 
-
-struct s_file {
-	size_t pos;
-	unsigned int size;
-	unsigned int id;
-	bool final_pos;
+// Struct representing a file
+struct s_file
+{
+	size_t pos;  // Start position of the file
+	unsigned int size;  // Size of the file
+	unsigned int id;  // ID of the file
+	bool final_pos;  // Whether this file is at its final position.
 };
 
-unsigned long int checksum(int *mem)
+unsigned long int checksum(int *disk)
 {
+	/**
+	 * Performs a checksum for the simple, literal representation of files
+	 * in a disk. This is the representation of the first problem which
+	 * treats files as individual "bytes".
+	 * @param disk representation of files in the disk.
+	 * @return checksum of the given disk representation.
+	 */
 	unsigned long int retval = 0;
 	size_t curr_pos = 0;
-	while (mem[curr_pos] != -1)
+	while (disk[curr_pos] != -1)
 	{
-		retval += curr_pos * mem[curr_pos];
+		retval += curr_pos * disk[curr_pos];
 		curr_pos += 1;
 	}
 	return retval;
 }
 
-unsigned long int checksum_list(GList *nodes)
+GArray *read_files(char *line)
 {
-	unsigned long int retval = 0;
-	struct s_file* ptr1;
-	for (size_t i=0; i < g_list_length(nodes); i++)
+	/**
+	 * Reads a list of files as a GList of structs.
+	 * @param line A string representing the input line
+	 */
+	int curr_id = 0;  // ID of the current file
+	size_t curr_pos = 0;  // Current position when looking forward
+	bool is_space = false;  // Are we reading the size of a space or a file?
+
+	struct s_file node_ptr;
+	GArray *disk = g_array_new(true, false, sizeof(struct s_file));
+	//// Read all nodes
+	for (size_t i = 0; i < strlen(line); i++)
 	{
-		ptr1 = (struct s_file*) g_list_nth(nodes, i)->data;
-		for (size_t j=0; j<ptr1->size; j++)
+		// This was the source of the one bug I had
+		if (line[i] == '\n' || line[i] == '\0')
 		{
-			retval += ptr1->id * (ptr1->pos + j);
+			break;
+		}
+		/*
+	node_ptr = (struct s_file*) malloc(sizeof(struct s_file));
+		node_ptr->pos = curr_pos;
+		node_ptr->size = line[i] - '0';
+		node_ptr->final_pos = false;
+	* */
+		node_ptr.pos = curr_pos;
+		node_ptr.size = line[i] - '0';
+		node_ptr.final_pos = false;
+		if (!is_space)
+		{
+			// node_ptr->id = curr_id;
+			node_ptr.id = curr_id;
+			curr_id += 1;
+			disk = g_array_append_val(disk, node_ptr);
+		}
+		// Increase the index of the current position and switch between
+		// space / file
+		curr_pos += line[i] - '0';
+		is_space = !is_space;
+	}
+	return disk;
+}
+
+void defrag(GArray *disk)
+{
+	struct s_file rightmost;
+	struct s_file candidate;  // Candidate position for an insertion
+	struct s_file candidate_next;  // File following the candidate
+	bool repeat = false;
+
+	for (size_t i = 0; i < disk->len; i++)
+	{
+		// Whenever we move a file we need to re-run index i because
+		// changing the position of a file means the i-th element is now
+		// new. Notice that this only happens because we are not using i
+		// (which goes from 0 to n) but rather pos_i (which goes from n
+		// to 0)
+		if (repeat)
+		{
+			i--;
+			repeat = false;
+		}
+		// Iterate back to front. This construction is easier than
+		// inverting the "for" condition because there is no check for
+		// underflow.
+		size_t pos_i = (disk->len - 1) - i;
+		// Obtain the rightmost element and already set that, wherever
+		// it lands, this is its final position.
+		rightmost = g_array_index(disk, struct s_file, pos_i);
+		rightmost.final_pos = true;
+		g_array_index(disk, struct s_file, pos_i) = rightmost;
+		for (size_t j = 0; j < pos_i; j++)
+		{
+			// Check where it could fit.
+			candidate = g_array_index(disk, struct s_file, j);
+			candidate_next =
+			    g_array_index(disk, struct s_file, j + 1);
+			if (candidate_next.pos -
+			        (candidate.pos + candidate.size) >=
+			    rightmost.size)
+			{
+				// The file fits here - we move it to its final
+				// position.
+				rightmost.pos = candidate.pos + candidate.size;
+				g_array_insert_vals(disk, j + 1, &rightmost, 1);
+				g_array_remove_index(disk, pos_i + 1);
+				// I need to let the "i" index know that, since
+				// I moved a file, I need to re-run the i-th
+				// index
+				repeat = true;
+				break;
+			}
+		}
+	}
+}
+
+unsigned long int checksum_array(GArray *disk)
+{
+	/**
+	 * Performs a checksum for a list of nodes contained in an array.
+	 * @param disk array of files contained in this disk.
+	 * @return checksum of the given disk representation.
+	 */
+	unsigned long int retval = 0;
+	struct s_file tmpfile;
+	for (size_t i = 0; i < disk->len; i++)
+	{
+		tmpfile = g_array_index(disk, struct s_file, i);
+		for (size_t j = 0; j < tmpfile.size; j++)
+		{
+			retval += tmpfile.id * (tmpfile.pos + j);
 		}
 	}
 	return retval;
-}
-
-unsigned long int checksum_array_list(struct s_file** nodes, size_t list_length)
-{
-	unsigned long int retval = 0;
-	struct s_file* ptr1;
-	for (size_t i=0; i < list_length; i++)
-	{
-		ptr1 = nodes[i];
-		for (size_t j=0; j<ptr1->size; j++)
-		{
-			retval += ptr1->id * (ptr1->pos + j);
-		}
-	}
-	return retval;
-}
-
-struct s_file** list_to_array(GList *nodes)
-{
-	struct s_file** retval;
-	retval = (struct s_file**) malloc(sizeof(struct s_file*) * g_list_length(nodes));
-	for (size_t i=0; i < g_list_length(nodes); i++)
-	{
-		retval[i] = (struct s_file*) g_list_nth(nodes, i)->data;
-	}
-	return retval;
-}
-void reshuffle(struct s_file** array_nodes, size_t pos_from, size_t pos_to)
-{
-	//     0 1 2 3 to 5 6 7 8 9 from 11 12 13
-        //-->  0 1 2 3 from to 5 6 7 8 9 11 12 13
-	//printf("Moving index %lu to %lu\n", pos_from, pos_to);
-	if (pos_to == pos_from)
-	{
-		printf("sucks\n");
-	}
-	assert(pos_to < pos_from);
-	struct s_file* node_from = array_nodes[pos_from];
-	struct s_file* node_to = array_nodes[pos_to-1];
-	memmove(&array_nodes[pos_to+1], &array_nodes[pos_to],
-		sizeof(struct s_file**) * (pos_from-pos_to));
-	array_nodes[pos_to] = node_from;
-	array_nodes[pos_to]->pos = node_to->pos + node_to->size;
 }
 
 void day9_1(char *filename)
@@ -88,15 +155,15 @@ void day9_1(char *filename)
 	/**
 	 * Solves the first problem for day 9 of the AoC and prints the answer.
 	 * @param filename path to the file containing the input data.
-	 * @notes I left this code as-is but this is a very bad solution for
-         * multiple reasons.
+	 * @notes This code assumes that the file representation is a continues
+	 * string of "bytes". This approach doesn't work for part 2.
 	 */
 
 	FILE *fp;  // Pointer to open a file
 	char *line = NULL;  // Line currently being read
 	size_t len = 0;  // Parameter for getline()
 
-	int *mem;  // Representation of the state of memory
+	int *disk;  // Representation of the state of memory
 	int curr_id = 0;  // ID of the current file
 	size_t curr_pos =
 	    0;  // Index for the current position when looking forward
@@ -112,9 +179,9 @@ void day9_1(char *filename)
 	// We reserve 9 times as much memory as characters - worse case
 	// scenarion is a line full of 9s. We are wasting some memory, but my PC
 	// can take it.
-	mem = (int *)malloc(sizeof(int) * strlen(line) * 9);
+	disk = (int *)malloc(sizeof(int) * strlen(line) * 9);
 	// Initialize all memory to -1
-	memset(mem, -1, sizeof(int) * strlen(line) * 9);
+	memset(disk, -1, sizeof(int) * strlen(line) * 9);
 
 	for (size_t i = 0; i < strlen(line); i++)
 	{
@@ -129,7 +196,7 @@ void day9_1(char *filename)
 			// counter
 			for (size_t j = 0; j < line[i] - '0'; j++)
 			{
-				mem[curr_pos + j] = curr_id;
+				disk[curr_pos + j] = curr_id;
 			}
 			curr_id += 1;
 		}
@@ -152,16 +219,16 @@ void day9_1(char *filename)
 		// Found some non-free memory at the end that needs to be moved
 		// to the beginning of the memory. We do that here by decreasing
 		// the curr_pos counter and increasing the curr_free pointer.
-		if (mem[curr_pos] != -1)
+		if (disk[curr_pos] != -1)
 		{
-			mem[curr_free] = mem[curr_pos];
-			mem[curr_pos] = -1;
+			disk[curr_free] = disk[curr_pos];
+			disk[curr_pos] = -1;
 			curr_free += 1;
-			while (mem[curr_free] != -1)
+			while (disk[curr_free] != -1)
 			{
 				curr_free += 1;
 			}
-			while (mem[curr_pos] == -1)
+			while (disk[curr_pos] == -1)
 			{
 				curr_pos -= 1;
 			}
@@ -169,8 +236,8 @@ void day9_1(char *filename)
 	}
 	// If we reached here the pointers have crossed and I am done sorting
 	// the file. All that remains is the checksum.
-	printf("%lu\n", checksum(mem));
-	free(mem);
+	printf("%lu\n", checksum(disk));
+	free(disk);
 	free(line);
 	fclose(fp);
 }
@@ -179,129 +246,36 @@ void day9_2(char *filename)
 {
 	/**
 	 * Solves the second problem for day 9 of the AoC and prints the answer.
+	 * This problem uses structures to represent every file.
 	 * @param filename path to the file containing the input data.
 	 */
 
 	FILE *fp;  // Pointer to open a file
 	char *line = NULL;  // Line currently being read
 	size_t len = 0;  // Parameter for getline()
-
-	int curr_id = 0;  // ID of the current file
-	size_t curr_pos = 0;  // Current position when looking forward
-	bool is_space = false;  // Are we reading the size of a space or a file?
-	GList *nodes = NULL;
-	struct s_file* node_ptr;
+	GArray *disk;  // Array containing every file
 
 	// Read the number of rows and columns
 	fp = fopen(filename, "r");
 	// Since we read a single line we don't need a "while" loop
 	getline(&line, &len, fp);
-
-	struct s_file* ptr1;
-	struct s_file* ptr2;
-	// Read all nodes
-	for (size_t i = 0; i < strlen(line); i++)
-	{
-		// This was the source of the one bug I had
-		if (line[i] == '\n')
-		{
-			break;
-		}
-		node_ptr = (struct s_file*) malloc(sizeof(struct s_file));
-		node_ptr->pos = curr_pos;
-		node_ptr->size = line[i] - '0';
-		node_ptr->final_pos = false;
-		if (!is_space)
-		{
-			node_ptr->id = curr_id;
-			curr_id += 1;
-			nodes = g_list_append(nodes, node_ptr);
-		}
-		else
-		{    
-			//nodes = g_list_append(nodes, node_ptr);
-			;
-		}
-		// Increase the index of the current position and switch between
-		// space / file
-		curr_pos += line[i] - '0';
-		is_space = !is_space;
-	}
+	// Read the file representation
+	disk = read_files(line);
+	// Free free memory for the file reading part
 	free(line);
 	fclose(fp);
 
-	int free_space = 0;
-	// We are now dealing with an array
-	struct s_file** array_nodes = list_to_array(nodes);
-	size_t list_length = g_list_length(nodes);
-	// Iterate from the back of the list to the front
-	for (size_t i=list_length-1; i > 0; i--)
-	{
-		//printf("%i\n", i);
-		// Some debug
-		/*
-		for (size_t k=0; k<g_list_length(nodes); k++)
-		{
-			//ptr1 = (struct s_file*) g_list_nth(nodes, k)->data;
-			ptr1 = array_nodes[k];
-			printf("[ID %i: %lu+%u] ", ptr1->id, ptr1->pos, ptr1->size);
-		}
-		printf("\n");
-		*/
-		node_ptr = array_nodes[i];
-		//node_ptr = (struct s_file*) g_list_nth(nodes, i)->data;
-		if (node_ptr->final_pos)
-		{
-			continue;
-		}
-		else
-		{
-			// After this loop we're done
-			node_ptr->final_pos = true;
-		}
+	// Do the file processing
+	defrag(disk);
+	printf("%lu\n", checksum_array(disk));
 
-		// Iterate from back to front until I either find space
-		// Or I cross this pointer
-		for (size_t j = 0; j < i-1; j++)
-		{
-			//ptr1 = (struct s_file*) g_list_nth(nodes, j)->data;
-			//ptr2 = (struct s_file*) g_list_nth(nodes, j+1)->data;
-			ptr1 = array_nodes[j];
-			ptr2 = array_nodes[j+1];
-			free_space = ptr2->pos - (ptr1->pos + ptr1->size);
-			assert(free_space >= 0);
-			if (node_ptr-> size <= free_space)
-			{
-				// I found free space for this file, so let's
-				// move it there.
-				// The array remains unchanged between 0 and j,
-				// we then insert the new element i in j+1,
-				// copy everything else between j+2 and i-1,
-				// and then the rest remains unchanged.
-				reshuffle(array_nodes, i, j+1);
-				//nodes = g_list_remove(nodes, node_ptr);
-				//nodes = g_list_insert(nodes, node_ptr, j-1);*/
-				// I need to regenerate the array
-				// Since I changed the indices I need to
-				// increase the i counter by 1
-				i++;
-				break;
-			}
-		}
-	}
-	// Calculate the checksum
-	printf("%lu\n", checksum_array_list(array_nodes, list_length));
 	// Free resources
-	free(array_nodes);
-	g_list_free_full(nodes, free);
+	g_array_unref(disk);
 }
 
 int main(int argc, char **argv)
 {
-	//day9_1("inputs/day9.txt");  // 6288599492129
-	day9_2("inputs/day9.txt");
-	// 9754046532263  too high
-	// 6321896733106
-
+	day9_1("inputs/day9.txt");  // 6288599492129
+	day9_2("inputs/day9.txt");  // 6321896265143
 	return 0;
 }
