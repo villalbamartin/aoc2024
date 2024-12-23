@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=`pkg-config --cflags glib-2.0` -Wall -pedantic
-LIBS=`pkg-config --libs glib-2.0` -lm
+LIBS=`pkg-config --libs glib-2.0` -lm -llpsolve55 -lcolamd
 
 all: day1 day2 day3 day4 day5 day6 day7 day8 day9 day10 day11 day12 day13 day14
 	echo "Making all"
