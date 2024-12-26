@@ -57,6 +57,7 @@ every submission:
 | Day 12 | Yes      |         |          |          |                 |
 | Day 13 | Yes      | Yes     | Yes*     | Yes      | Yes             |
 | Day 14 | Yes      | Yes     | Yes*     | Yes      | Yes             |
+| Day 15 | Yes      | No      | Yes*     | Yes      | Yes             |
 
 
 References
